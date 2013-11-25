@@ -192,15 +192,23 @@ class Form extends Abstracts\Addable
 		}
 	}
 	
-	/**
-	 * Outputs the HTML form
-	 * 
-     * @return null
-     */
-	public function display()
-	{	
-		echo $this->render();
-	}
+    /**
+    * Outputs the HTML form
+    * @return null
+    */
+    public function display()
+    {
+        echo $this;
+    }
+
+    /**
+    * Renders the HTML form to a string
+    * @return string
+    */
+    public function __toString()
+    {
+        return $this->render();
+    }
 
 	/**
 	 * Creates the form HTML
