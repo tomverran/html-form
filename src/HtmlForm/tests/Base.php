@@ -12,7 +12,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Reflection of the object you are testing
-	 * @var reflection object
+	 * @var \ReflectionObject
 	 */
 	protected $reflection;
 
@@ -29,7 +29,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
 	 * making it accessible to us (required for protected and private methods)
 	 * 
 	 * @param string $method The method you are looking to test
-	 * @return ReflectionMethod
+	 * @return \ReflectionMethod
 	 */
 	public function getMethod($method)
 	{
@@ -44,7 +44,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
 	 * making it accessible to us (required for protected and private properties)
 	 * 
 	 * @param string $property The property you are looking to test
-	 * @return ReflectionProperty
+	 * @return \ReflectionProperty
 	 */
 	public function getProperty($property)
 	{
@@ -60,13 +60,14 @@ abstract class Base extends \PHPUnit_Framework_TestCase
 	 * 
 	 * @param string $property The property to set
 	 * @param string $value    The value to set
-	 * @return ReflectionProperty
+	 * @return \ReflectionProperty
 	 */
 	public function setProperty($property, $value)
 	{
 		$property = $this->reflection->getProperty($property);
 		$property->setAccessible(true);
 
-		return $property->setValue($this->testClass, $value);
+		$property->setValue($this->testClass, $value);
+        return $property;
 	}
 }

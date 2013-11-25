@@ -2,6 +2,8 @@
 
 namespace HtmlForm;
 
+use HtmlForm\Abstracts\Addable;
+
 class Form extends Abstracts\Addable
 {	
 	/**
@@ -36,8 +38,7 @@ class Form extends Abstracts\Addable
 	public function __construct($config = array())
 	{
 		$this->setConfig($config);
-		$this->validator = new \HtmlForm\Utility\Validator();
-
+		$this->validator = new Utility\Validator();
 		$this->compiledAttr = Utility\TextManipulator::arrayToTagAttributes($this->config["attr"]);
 	}
 
@@ -52,7 +53,12 @@ class Form extends Abstracts\Addable
 		return $_SERVER["QUERY_STRING"] ? $_SERVER["PHP_SELF"] . "?" . $_SERVER["QUERY_STRING"] : $_SERVER["PHP_SELF"];
 	}
 
-	public function setConfig($config)
+    /**
+     * Set form configuration options
+     * @param array $config
+     * @return $this
+     */
+    public function setConfig($config)
 	{
 		$defaults = array(
 			"method" => "post",
@@ -65,6 +71,7 @@ class Form extends Abstracts\Addable
 		);
 
 		$this->config = array_merge($defaults, $config);
+        return $this;
 	}
 
 	/**
@@ -93,7 +100,7 @@ class Form extends Abstracts\Addable
 
 	public function addHoneypot($args = array())
 	{
-		$element = new \HtmlForm\Elements\Honeypot(sha1($this->config["id"]), "Do not enter content here", $args);
+		$element = new Elements\Honeypot(sha1($this->config["id"]), "Do not enter content here", $args);
 		$this->elements[] = $element;
 
 		return $this;
@@ -101,7 +108,7 @@ class Form extends Abstracts\Addable
 
 	public function addFieldset($label = null, $args = array())
 	{
-		$fieldset = new \HtmlForm\Fieldset($label, $args);
+		$fieldset = new Fieldset($label, $args);
 		$this->elements[] = $fieldset;
 
 		return $fieldset;
@@ -124,7 +131,11 @@ class Form extends Abstracts\Addable
 		}
 	}
 
-	public function passedHoneypot()
+    /**
+     * Have we passed the honeypot check?
+     * @return bool
+     */
+    public function passedHoneypot()
 	{
 		return !$this->validator->honeypotError;
 	}
@@ -156,10 +167,10 @@ class Form extends Abstracts\Addable
 		}
 	}
 
-	/**
+    /**
      * Gets the current value attribute of a form element
-     * @param  object $name 	Form element object
-     * @return string 			The form element's current value
+     * @param Elements\Parents\Field $element The element
+     * @return string The form element's current value
      */
 	protected function getValue($element)
 	{	
@@ -226,7 +237,7 @@ class Form extends Abstracts\Addable
 	 * Creates the opening <form> tag
 	 * @return string
 	 */
-	protected function getOpeningTag()
+	public function getOpeningTag()
 	{
 		return "<form method=\"{$this->config["method"]}\" action=\"{$this->config["action"]}\" id=\"{$this->config["id"]}\" {$this->compiledAttr}>";
 	}
@@ -235,24 +246,19 @@ class Form extends Abstracts\Addable
 	 * Creates the closing </form> tag
 	 * @return string
 	 */
-	protected function getClosingTag()
+	public function getClosingTag()
 	{
 		return "</form>";
 	}
 
 	/**
 	 * Compiles HTML for each form element
-	 * @param  object $addable Object that extends from \HtmlForm\Abstracts\Addable
+	 * @param  Abstracts\Addable $addable Object that extends from \HtmlForm\Abstracts\Addable
 	 * @return string HTML of form elements
 	 */
-	protected function renderElements($addable)
+	protected function renderElements(Addable $addable)
 	{
-		if (!is_object($addable) || is_object($addable) && !in_array("HtmlForm\Abstracts\Addable", class_parents($addable))) {
-			return;
-		}
-
 		$html = $addable->getOpeningTag();
-
 		foreach ($addable->elements as $element) {
 
 			$classes = class_parents($element);
@@ -268,7 +274,6 @@ class Form extends Abstracts\Addable
 		}
 
 		$html .= $addable->getClosingTag();
-
 		return $html;
 	}	
 }

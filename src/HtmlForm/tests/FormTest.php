@@ -1,14 +1,26 @@
 <?php
 
 namespace HtmlForm\tests;
+use HtmlForm\Form;
 
 class FormTest extends Base
 {
-	protected $testClass;
+    /**
+     * @var Form
+     */
+    protected $testClass;
 
-	public function setUp()
+    /**
+     * @var array[]
+     */
+    private $mocks;
+
+    /**
+     * Set up before every test
+     */
+    public function setUp()
 	{
-		$this->testClass = new \HtmlForm\Form();
+		$this->testClass = new Form();
 		parent::setUp();
 
 		$this->mocks = array(
@@ -197,10 +209,8 @@ class FormTest extends Base
 
 	public function testRenderElementsWithoutAddable()
 	{
+        $this->setExpectedException('PHPUnit_Framework_Error'); //type hinted
 		$method = $this->getMethod("renderElements");
-
-		$result = $method->invoke($this->testClass, array());
-
-		$this->assertEquals(null, $result);
+		$method->invoke($this->testClass, array());
 	}
 }

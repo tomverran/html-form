@@ -56,6 +56,18 @@ abstract class Addable
 	}
 
     /**
+     * Get the opening tag of this Addable
+     * @return string
+     */
+    public abstract function getOpeningTag();
+
+    /**
+     * Get the closing tag of this Addable
+     * @return string
+     */
+    public abstract function getClosingTag();
+
+    /**
      * Retrieve a reflection class instance for the given class name
      * @param string $className The class name to get an RC instance for
      * @return \ReflectionClass
